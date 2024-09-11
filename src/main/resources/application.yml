@@ -1,0 +1,8 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/driver_load
+    username: postgres
+    password: 1998
+springdoc:
+  swagger-ui:
+    path: /api
