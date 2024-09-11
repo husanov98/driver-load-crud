@@ -7,17 +7,23 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import uz.mh.driver_load_crud.dto.LoadDto;
 import uz.mh.driver_load_crud.dto.UpdateLoadStatusDto;
-import uz.mh.driver_load_crud.mapper.LoadMapper;
 import uz.mh.driver_load_crud.model.Load;
+import uz.mh.driver_load_crud.projection.DriverProjection;
+import uz.mh.driver_load_crud.projection.DriverWithLoadsProjection;
 import uz.mh.driver_load_crud.projection.LoadProjection;
+import uz.mh.driver_load_crud.repository.DriverRepository;
 import uz.mh.driver_load_crud.repository.LoadRepository;
+
+import java.util.List;
 
 @Service
 public class LoadServiceImpl implements LoadService {
     private final LoadRepository loadRepository;
+    private final DriverRepository driverRepository;
 
-    public LoadServiceImpl(LoadRepository loadRepository) {
+    public LoadServiceImpl(LoadRepository loadRepository, DriverRepository driverRepository) {
         this.loadRepository = loadRepository;
+        this.driverRepository = driverRepository;
     }
 
     @Override
@@ -65,6 +71,41 @@ public class LoadServiceImpl implements LoadService {
                     load.setStatus(loadStatusDto.getStatus());
                     return loadRepository.save(load).then(Mono.just("Load status updated successfully"));
                 }).switchIfEmpty(Mono.just("Load not found"));
+    }
+
+    @Override
+    public Mono<DriverWithLoadsProjection> getAllData(Long driverId, int page, int size) {
+        Flux<Load> all = loadRepository.findAllByDriverId(driverId, page, size);
+        Mono<DriverProjection> driverMono = driverRepository.findDriverById(driverId);
+
+        return driverMono.flatMap(driver -> all.collectList()
+                .map(loads -> new DriverWithLoadsProjection() {
+                    @Override
+                    public Long getId() {
+                        return driver.getId();
+                    }
+                    @Override
+                    public String getFirstname() {
+                        return driver.getFirstname();
+                    }
+                    @Override
+                    public String getLastname() {
+                        return driver.getLastname();
+                    }
+                    @Override
+                    public String getEmail() {
+                        return driver.getEmail();
+                    }
+                    @Override
+                    public String getPhone() {
+                        return driver.getPhone();
+                    }
+                    @Override
+                    public List<Load> getLoads() {
+                        return loads;
+                    }
+                })
+        );
     }
 
 }

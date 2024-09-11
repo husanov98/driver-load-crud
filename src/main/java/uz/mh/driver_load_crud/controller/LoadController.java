@@ -67,4 +67,10 @@ public class LoadController {
     Mono<String> updateStatus(@io.swagger.v3.oas.annotations.parameters.RequestBody UpdateLoadStatusDto loadStatusDto){
         return loadService.updateStatus(loadStatusDto);
     }
+    @GetMapping("/getAllData")
+    Mono<?> getAllData(@RequestParam(name = "driver_id") Long id,
+                       @RequestParam(name = "page") int page,
+                       @RequestParam(name = "size") int size){
+        return loadService.getAllData(id, page, size);
+    }
 }

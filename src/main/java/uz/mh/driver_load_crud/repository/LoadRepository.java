@@ -15,4 +15,6 @@ public interface LoadRepository extends ReactiveCrudRepository<Load,Long> {
 //    @Query(("select * from loads where driver_id =:id"))
 //    Flux<Load> findByDriver(Long id,Pageable pageable);
     Flux<Load> findAllBy(Pageable pageable);
+    @Query(("select * from loads where driver_id =:driverId limit :size offset :page*2"))
+    Flux<Load> findAllByDriverId(Long driverId,int page,int size);
 }

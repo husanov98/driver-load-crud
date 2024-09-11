@@ -18,6 +18,5 @@ public interface LoadService {
     Mono<Void> deleteLoadById(Long id);
     Mono<String> updateLoad(Load load);
     Mono<String> updateStatus(UpdateLoadStatusDto loadStatusDto);
-
-
+    Mono<?> getAllData(Long driverId,int page,int size);
 }

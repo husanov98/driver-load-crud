@@ -53,10 +53,8 @@ public class DriverController {
 
     @GetMapping("/getDriver")
     @Operation(summary = "Find Driver by id")
-    Mono<ResponseEntity<ResponseEntity<Driver>>> findDriverById(@RequestParam(name = "id") Long id){
-        return driverService.findDriverById(id)
-                .flatMap(existingDriver -> driverService.findDriverById(id))
-                .map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
+    Mono<ResponseEntity<Driver>> findDriverById(@RequestParam(name = "id") Long id){
+        return driverService.findDriverById(id);
     }
 
     @PostMapping("/addDriver")

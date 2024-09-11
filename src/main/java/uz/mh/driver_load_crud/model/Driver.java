@@ -15,9 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class Driver{
     @Id
     private Long id;
-    @Column("first_name")
     private String firstname;
-    @Column("last_name")
     private String lastname;
     private String email;
     private String phone;
