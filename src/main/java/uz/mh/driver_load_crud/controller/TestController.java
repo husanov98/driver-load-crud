@@ -10,7 +10,7 @@ import uz.mh.driver_load_crud.projection.LoadProjection;
 import uz.mh.driver_load_crud.service.TestService;
 
 @RestController
-@RequestMapping("/api/pizdes")
+@RequestMapping("/api")
 public class TestController {
     private final TestService testService;
 
