@@ -4,8 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -55,19 +53,9 @@ public class DriverController {
 
     @GetMapping("/getDriver")
     @Operation(summary = "Find Driver by id")
-    Mono<ResponseEntity<Driver>> findDriverById(@RequestParam(name = "id") Long id,
-                                                                @RequestParam(name = "email")String email,
-                                                                @AuthenticationPrincipal UserDetails userDetails){
-        return userService.findByUsername(email)
-                .filter(driver -> driver.getEmail().equals(email))
-                .flatMap(driver -> {
-                    // You can add more complex authorization logic here
-                    if (userDetails.getUsername().equals(driver.getEmail())) { // Example check
-                        return Mono.just(driver);
-                    }
-                    return null;
-                }
-                )
+    Mono<ResponseEntity<ResponseEntity<Driver>>> findDriverById(@RequestParam(name = "id") Long id){
+        return driverService.findDriverById(id)
+                .flatMap(existingDriver -> driverService.findDriverById(id))
                 .map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
